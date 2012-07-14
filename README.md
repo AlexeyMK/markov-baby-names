@@ -1,4 +1,5 @@
-markov-baby-names
-=================
+Markov Baby Name Generator
+--------------------------
 
-Baby Name Generator using a simple Markov Chain.
+Looking for a baby name? Want something unique but sounding 'about right'? Let [http://en.wikipedia.org/wiki/Markov_chain](Uncle Markov) help.
+
