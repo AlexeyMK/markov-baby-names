@@ -28,7 +28,8 @@ messages = ["Thinking about a {gender} name? how about {name}? {tags}",
 
 def send_tweet():
   gender, chain = chains.next()
-  name = chain.generate_name()
+  # total overkill for 'find the first name between 3 and 14 characters)
+  name = (n for n in iter(chain.generate_name, '') if 2 < len(n) < 15).next()
   final_message = choice(messages).format(
     name=name,
     gender=gender,
