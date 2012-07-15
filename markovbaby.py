@@ -36,17 +36,13 @@ def generate_name(chain):
     return name.capitalize()
 
 
-def generate_markov_name(input_file, num_names):
-    markov_chain = create_chain(input_file)
+if __name__ == '__main__':
+    from sys import argv
+    names_file = argv[1]
+    num_names = 1 if len(argv) == 2 else int(argv[2])
+    markov_chain = create_chain(names_file)
     for number in xrange(1, num_names + 1):
         name = ''
         while len(name) < 3 or len(name) > 15:
             name = generate_name(markov_chain)
         print "Name #%d: %s" % (number, name)
-
-
-if __name__ == '__main__':
-    from sys import argv
-    filename = argv[1]
-    num_names = 1 if len(argv) == 2 else int(argv[2])
-    generate_markov_name(filename, num_names)
