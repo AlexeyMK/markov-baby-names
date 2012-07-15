@@ -1,48 +1,53 @@
-def create_chain(input_file):
+import random
+
+from collections import defaultdict
+from sys import argv
+
+WORD_SEP = ' '
+
+class MarkovName:
+  def __init__(self, input_file):
+    """ input file should have one name per line"""
     markov_file = open(input_file, 'r')
-    from collections import defaultdict
-    chain = defaultdict(list)
     # markov chain is a dictionary from {(letter) to list-of-letters-seen-after}
     # {c: 'aaoehhhhh   '}
-    for line in markov_file:
-        if line.startswith('#'):
-            continue
-        # Alice
-        line = line.lower().strip()
-        # alice
-        pairs = zip(line, line[1:])
-        #pairs = [(a,l), (l, i), (i, c), (c, e)]
-        for first, second in pairs:
-            chain[first].append(second)
-        # +1 for e as last character
-        chain[line[-1]].append(' ')
-        # +1 for a as first character
-        chain[' '].append(line[0])
+    self.chain = defaultdict(list)
+    names = (line for line in markov_file if not line[0] == '#')
+    for name in names:
+      # Alice
+      proper_name = name.lower().strip()
+      # alice
+      pairs = zip(proper_name, proper_name[1:])
+      #pairs = [(a,l), (l, i), (i, c), (c, e)]
+      for first, second in pairs:
+          self.chain[first].append(second)
+      # +1 for e as last character
+      self.chain[proper_name[-1]].append(WORD_SEP)
+      # +1 for a as first character
+      self.chain[WORD_SEP].append(proper_name[0])
 
-    return chain
+  def generate_name(self):
+    name = []
+    current = WORD_SEP  # used to mark both first and last character
+    while not (current == WORD_SEP and name):
+      current = random.choice(self.chain[current])
+      name.append(current)
 
-
-def generate_name(chain):
-    from random import choice
-    name = ''
-    current = ' ' # pick first letter
-    while True:
-        current = choice(chain[current])
-        if current != ' ':  # word isn't over yet
-            name+= current
-        else:
-            break
-
-    return name.capitalize()
+    return ''.join(name).strip().capitalize()
 
 
 if __name__ == '__main__':
-    from sys import argv
-    names_file = argv[1]
-    num_names = 1 if len(argv) == 2 else int(argv[2])
-    markov_chain = create_chain(names_file)
-    for number in xrange(1, num_names + 1):
+    try:
+      if len(argv) not in (2,3):
+        raise Exception("Too many or too few arguments")
+      names_file = argv[1]
+      num_names = 1 if len(argv) == 2 else int(argv[2])
+      chain = MarkovName(names_file)
+      for number in xrange(1, num_names + 1):
         name = ''
         while len(name) < 3 or len(name) > 15:
-            name = generate_name(markov_chain)
-        print "Name #%d: %s" % (number, name)
+          name = chain.generate_name()
+          print "Name #%d: %s" % (number, name)
+    except Exception as e:
+      print "Usage: python markovbaby.py input_file.txt [num_names]"
+      print "Exception: %s" % e
