@@ -47,7 +47,7 @@ if __name__ == '__main__':
         name = ''
         while len(name) < 3 or len(name) > 15:
           name = chain.generate_name()
-          print "Name #%d: %s" % (number, name)
+        print "Name #%d: %s" % (number, name)
     except Exception as e:
       print "Usage: python markovbaby.py input_file.txt [num_names]"
       print "Exception: %s" % e
